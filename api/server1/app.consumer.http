@@ -1,0 +1,64 @@
+### 401 Unauthorised due to invalida PIN
+POST http://localhost:3000/api/v1/pin/validate HTTP/1.1
+content-type: application/json
+
+{
+    "pin": "eiei"
+}
+### 200
+POST http://localhost:3000/api/v1/pin/validate HTTP/1.1
+content-type: application/json
+
+{
+    "pin": "132495"
+}
+
+### http 400
+POST http://localhost:3000/api/v1/pin/validate HTTP/1.1
+content-type: application/json
+
+{
+    "body": "eiei"
+}
+### http 400
+POST http://localhost:3000/api/v1/pin/validate HTTP/1.1
+content-type: application/json
+
+{
+    "pin": null
+}
+### http 400
+POST http://localhost:3000/api/v1/pin/validate HTTP/1.1
+content-type: application/json
+
+{
+    "pin": ""
+}
+
+### http 401
+POST http://localhost:3000/api/v1/pin/validate HTTP/1.1
+content-type: application/json
+
+{
+    "pin": "22"
+}
+
+### http 200
+GET http://localhost:3000/api/v1/user HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+
+### http 200
+GET http://localhost:3000/api/v1/user HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJlbWFpbCI6InBhdEBleGFtcGxlLmNvbSJ9
+
+### http 200
+GET http://localhost:3000/api/v1/user HTTP/1.1
+content-type: application/json
+Authorization: Bearer rr4RIu-hZkeryZRXK7dEwquQn4rVGqZFEmKWwuR_kYs
+
+### http 401
+GET http://localhost:3000/api/v1/user HTTP/1.1
+content-type: application/json
+Authorization: Bearer hZkeryZRXK7dEwquQn4rVGqZFEmKWwuR_kYs

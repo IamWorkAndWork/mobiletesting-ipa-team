@@ -1,0 +1,15 @@
+appId: com.mobiletesting.mobiletesting
+---
+- launchApp 
+- assertVisible: "Enter PIN"
+- tapOn: "1"
+- tapOn: "3"
+- tapOn: "2"
+- tapOn: "4"
+- tapOn: "9"
+- tapOn: "5"
+- assertVisible: "Home"
+- assertVisible: "John Doe"
+- assertVisible: "Latest News"
+- stopApp 
+
