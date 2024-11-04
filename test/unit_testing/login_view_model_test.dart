@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobiletesting/login_screen/login_view_model.dart';
@@ -115,6 +117,25 @@ void main() {
             //Assert
             expect(loginViewModel.inputtedPin, "");
           }, tags: 'unit');
+
+
+      test('given inputted 1 digit should show dot with filled first index', (){
+        //Arrange
+        final context = MockBuildContext();
+
+        //Act
+        loginViewModel.onDigitPressed(1, context);
+
+        //Assert
+        expect(loginViewModel.isInput(1), true);
+        expect(loginViewModel.isInput(2), false);
+        expect(loginViewModel.isInput(3), false);
+        expect(loginViewModel.isInput(4), false);
+        expect(loginViewModel.isInput(5), false);
+        expect(loginViewModel.isInput(6), false);
+
+      }, tags: 'unit');
+
     });
 
     group('navigation', () {});

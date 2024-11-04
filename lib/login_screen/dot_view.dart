@@ -13,32 +13,22 @@ class Dot extends StatelessWidget {
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
         ...List<int>.generate(6, (i) => i + 1).map<Widget>(
           (index) {
-            final isInput = viewModel.isInput(index);
-            if (isInput) {
-              return createInputNumber(index);
-            } else {
-              return createCircle(index, viewModel);
-            }
+            return createCircle(index, viewModel);
           },
         )
       ]),
     );
   }
 
-  Text createInputNumber(int index) {
-    return Text(
-      viewModel.getCurrentNumber(index),
-      style: TextStyle(
-        fontSize: 20,
-        color: Colors.black,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-
   Widget createCircle(int index, LoginViewModel viewModel) {
-    final inputtedPinLength = 0;
-    return Container(width: 15.0, height: 15.0, decoration: nonFilledCircle());
+    final isInput = viewModel.isInput(index);
+    if (isInput) {
+      final digit = viewModel.getCurrentNumber(index);
+      return createFilledCircle(digit);
+    } else {
+      return Container(
+          width: 15.0, height: 15.0, decoration: nonFilledCircle());
+    }
   }
 
   BoxDecoration filledCircle() {
@@ -56,5 +46,9 @@ class Dot extends StatelessWidget {
         width: 2.0,
       ),
     );
+  }
+
+  Widget createFilledCircle(String digit) {
+    return Container(width: 15.0, height: 15.0, decoration: filledCircle());
   }
 }

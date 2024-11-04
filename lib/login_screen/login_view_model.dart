@@ -34,8 +34,28 @@ class LoginViewModel extends ChangeNotifier {
     } else {
       print("Warning exceed 6 digits");
     }
+
+
+    final emptyList = _enteredDigits.where((digit) => digit.isEmpty).toList();
+
+    if (emptyList.isEmpty) {
+      // _enteredDigits.clear();
+      // _currentIndex = 0;
+      // _enteredDigits.map((e) => e = "").toList();
+      // myDelayedFunction(context);
+      // print("_enteredDigits = ${_enteredDigits}");
+    }
+
     _inputtedPin = _enteredDigits.join('');
     notifyListeners();
+  }
+
+  Future<void> myDelayedFunction(BuildContext context) async {
+    _currentIndex = 0;
+    // _isLoading = true;
+    // await Future.delayed(const Duration(seconds: 1));
+    // _navigateToUserDetailsScreen(context);
+    // _isLoading = false;
   }
 
   Future<void> onShowErrorDialogButtonPressed(BuildContext context) async {
