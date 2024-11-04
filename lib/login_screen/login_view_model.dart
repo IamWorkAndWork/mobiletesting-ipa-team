@@ -39,23 +39,28 @@ class LoginViewModel extends ChangeNotifier {
     final emptyList = _enteredDigits.where((digit) => digit.isEmpty).toList();
 
     if (emptyList.isEmpty) {
-      // _enteredDigits.clear();
-      // _currentIndex = 0;
-      // _enteredDigits.map((e) => e = "").toList();
-      // myDelayedFunction(context);
-      // print("_enteredDigits = ${_enteredDigits}");
+      processAuthenPin(context);
     }
 
     _inputtedPin = _enteredDigits.join('');
     notifyListeners();
   }
 
-  Future<void> myDelayedFunction(BuildContext context) async {
-    _currentIndex = 0;
-    // _isLoading = true;
-    // await Future.delayed(const Duration(seconds: 1));
-    // _navigateToUserDetailsScreen(context);
-    // _isLoading = false;
+  Future<void> processAuthenPin(BuildContext context) async {
+    // _currentIndex = 0;
+
+
+    await Future.delayed(const Duration(milliseconds: 300));
+    _isLoading = true;
+    notifyListeners();
+
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    _navigateToUserDetailsScreen(context);
+    _isLoading = false;
+
+    resetPin();
+    notifyListeners();
   }
 
   Future<void> onShowErrorDialogButtonPressed(BuildContext context) async {
@@ -133,5 +138,13 @@ class LoginViewModel extends ChangeNotifier {
 
   String getCurrentNumber(int index) {
     return _enteredDigits[index - 1];
+  }
+
+  void resetPin() {
+    for (int i = 0; i < _enteredDigits.length; i++) {
+      _enteredDigits[i] = "";
+    }
+    _currentIndex = 0;
+    _inputtedPin = '';
   }
 }
