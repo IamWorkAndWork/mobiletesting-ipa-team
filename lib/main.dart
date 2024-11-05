@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mobiletesting/login_screen/login_screen.dart';
 import 'package:mobiletesting/login_screen/login_view_model.dart';
+import 'package:mobiletesting/login_screen/pin_rules.dart';
 import 'package:mobiletesting/login_screen/sort_order.dart';
 import 'package:mobiletesting/login_screen/login_service.dart';
 import 'package:provider/provider.dart';
@@ -22,8 +23,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: ChangeNotifierProvider(
-        create: (_) => LoginViewModel(LoginService(),
-            Random().nextBool() ? SortOrder.ascending : SortOrder.descending),
+        create: (_) => LoginViewModel(
+            LoginService(),
+            Random().nextBool() ? SortOrder.ascending : SortOrder.descending,
+            PinRules()),
         child: LoginScreen(),
       ),
     );

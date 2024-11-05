@@ -3,21 +3,26 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobiletesting/login_screen/login_view_model.dart';
+import 'package:mobiletesting/login_screen/pin_rules.dart';
 import 'package:mobiletesting/login_screen/sort_order.dart';
 import 'package:mobiletesting/login_screen/login_service.dart';
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 import 'login_view_model_test.mocks.dart';
 
-@GenerateMocks([BuildContext, LoginService])
+@GenerateMocks([BuildContext, LoginService, PinRules])
 void main() {
   group('LoginViewModel', () {
     late LoginViewModel loginViewModel;
     late MockLoginService mockLoginService;
+    late MockPinRules mockPinRules;
 
     setUp(() {
       mockLoginService = MockLoginService();
-      loginViewModel = LoginViewModel(mockLoginService, SortOrder.ascending);
+      mockPinRules = MockPinRules();
+      loginViewModel =
+          LoginViewModel(mockLoginService, SortOrder.ascending, mockPinRules);
     });
 
     group('onDigitPressed', () {
@@ -106,20 +111,20 @@ void main() {
 
       test(
           'given inputted pin is 1 digit when delete button is click then last digit from inputtedPin will be empty',
-              () {
-            //Arrange
-            final context = MockBuildContext();
-            loginViewModel.onDigitPressed(2, context);
+          () {
+        //Arrange
+        final context = MockBuildContext();
+        loginViewModel.onDigitPressed(2, context);
 
-            //Act
-            loginViewModel.onDeleteButtonPressed();
+        //Act
+        loginViewModel.onDeleteButtonPressed();
 
-            //Assert
-            expect(loginViewModel.inputtedPin, "");
-          }, tags: 'unit');
+        //Assert
+        expect(loginViewModel.inputtedPin, "");
+      }, tags: 'unit');
 
-
-      test('given inputted 1 digit should show dot with filled first index', (){
+      test('given inputted 1 digit should show dot with filled first index',
+          () {
         //Arrange
         final context = MockBuildContext();
 
@@ -133,11 +138,37 @@ void main() {
         expect(loginViewModel.isInput(4), false);
         expect(loginViewModel.isInput(5), false);
         expect(loginViewModel.isInput(6), false);
-
       }, tags: 'unit');
-
     });
 
-    group('navigation', () {});
+    group('pin rule', () {
+      test('given inputted pin is sequential number should show error', () {
+        //Arrange
+        when(mockPinRules.getErrorMessage("123456"))
+            .thenReturn("Pin cannot be repeated");
+
+        //Act
+        final result = mockPinRules.getErrorMessage("123456");
+
+        //Assert
+        expect(result, "Pin cannot be repeated");
+      }, tags: 'unit');
+
+      test('given inputted pin valid should show Ready to Submit Pin', () {
+        //Arrange
+        final context = MockBuildContext();
+        loginViewModel.onDigitPressed(0, context);
+        loginViewModel.onDigitPressed(1, context);
+        loginViewModel.onDigitPressed(2, context);
+        loginViewModel.onDigitPressed(8, context);
+        loginViewModel.onDigitPressed(7, context);
+
+        //Act
+        loginViewModel.onDigitPressed(5, context);
+
+        //Assert
+        expect(loginViewModel.dialogMessage, "Ready to Submit Pin");
+      }, tags: 'unit');
+    });
   });
 }

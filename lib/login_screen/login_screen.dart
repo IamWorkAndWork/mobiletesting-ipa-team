@@ -21,6 +21,13 @@ class LoginScreen extends StatelessWidget {
       body: Center(
         child: Consumer<LoginViewModel>(
           builder: (context, viewModel, child) {
+            var submitBtnColor;
+            if (viewModel.dialogMessage == null) {
+              submitBtnColor = Colors.blue;
+            } else {
+              submitBtnColor = Colors.grey;
+            }
+
             return Column(
               children: <Widget>[
                 Dot(
@@ -41,6 +48,30 @@ class LoginScreen extends StatelessWidget {
                         color: Color.fromARGB(255, 37, 9, 131),
                       )
                     : pinGridViewWidget(viewModel, context),
+                Container(
+                  width: double.infinity, // Match parent width
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: submitBtnColor,
+                      ),
+                      onPressed: () {
+                        viewModel.onShowSuccessButtonPressed(context);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Submit',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
               ],
             );
           },

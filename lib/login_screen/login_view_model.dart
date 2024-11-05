@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobiletesting/home_screen/home_screen.dart';
 import 'package:mobiletesting/home_screen/home_view_model.dart';
 import 'package:mobiletesting/login_screen/login_service.dart';
+import 'package:mobiletesting/login_screen/pin_rules.dart';
 import 'package:mobiletesting/login_screen/sort_order.dart';
 import 'package:provider/provider.dart';
 
@@ -12,10 +13,15 @@ class LoginViewModel extends ChangeNotifier {
 
   final LoginService loginService;
   final SortOrder keyPadsortOrder;
+  final PinRules pinRules;
 
-  LoginViewModel(this.loginService, this.keyPadsortOrder);
+  LoginViewModel(this.loginService, this.keyPadsortOrder, this.pinRules);
 
   String get inputtedPin => _inputtedPin;
+
+  String? _dialogMessage;
+
+  String? get dialogMessage => _dialogMessage ?? "Ready to Submit Pin";
 
   List get enteredDigits => _enteredDigits;
 
@@ -35,36 +41,55 @@ class LoginViewModel extends ChangeNotifier {
       print("Warning exceed 6 digits");
     }
 
-
     final emptyList = _enteredDigits.where((digit) => digit.isEmpty).toList();
+
+    _inputtedPin = _enteredDigits.join('');
 
     if (emptyList.isEmpty) {
       processAuthenPin(context);
     }
 
-    _inputtedPin = _enteredDigits.join('');
     notifyListeners();
   }
 
   Future<void> processAuthenPin(BuildContext context) async {
-    // _currentIndex = 0;
-
-
-    await Future.delayed(const Duration(milliseconds: 300));
     _isLoading = true;
     notifyListeners();
+    await Future.delayed(const Duration(milliseconds: 300));
 
-    await Future.delayed(const Duration(milliseconds: 1500));
+    String pin = _inputtedPin;
+    String? result = pinRules.getErrorMessage(pin);
 
-    _navigateToUserDetailsScreen(context);
-    _isLoading = false;
+    if (result == null) {
+      //pass pin validation
 
-    resetPin();
-    notifyListeners();
+      // await Future.delayed(const Duration(milliseconds: 500));
+      _isLoading = false;
+
+      _dialogMessage = null;
+      // _navigateToUserDetailsScreen(context);
+      // _showErrorDialog("success: Ready to submit pin", context);
+
+      // resetPin();
+      notifyListeners();
+    } else {
+      //not pass pin validation
+      _dialogMessage = result;
+      _showErrorDialog(result, null, context);
+      _isLoading = false;
+      resetPin();
+      notifyListeners();
+    }
   }
 
   Future<void> onShowErrorDialogButtonPressed(BuildContext context) async {
-    _showErrorDialog("Workshop1", context);
+    _showErrorDialog("Workshop1", null, context);
+  }
+
+  Future<void> onShowSuccessButtonPressed(BuildContext context) async {
+    if (dialogMessage == null) {
+      _submitPin(context);
+    }
   }
 
   //workshop 1
@@ -75,10 +100,14 @@ class LoginViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
+    await Future.delayed(const Duration(milliseconds: 300));
     final isAuthenticated = true;
 
     _isLoading = false;
     notifyListeners();
+
+    _showErrorDialog("Ready to Submit Pin", "success", context);
+
   }
 
   //Workshop 7
@@ -94,12 +123,17 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   //workshop 0
-  void _showErrorDialog(String content, BuildContext context) {
+  void _showErrorDialog(String content, String? title, BuildContext context) {
+    var _title = "Error";
+    if (title != null) {
+      _title = title;
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Error"),
+          title: Text(_title),
           content: Text(content),
           actions: [
             TextButton(
@@ -117,13 +151,15 @@ class LoginViewModel extends ChangeNotifier {
   //workshop 2
   void onDeleteButtonPressed() {
     if (_currentIndex > 0) {
+      _dialogMessage = "please enter 6 digits";
+
       _currentIndex--;
       _enteredDigits[_currentIndex] = "";
       _inputtedPin = _enteredDigits.join('');
       if (_currentIndex == 0) {
         _inputtedPin = "";
       }
-    }
+    } else {}
 
     notifyListeners();
   }
